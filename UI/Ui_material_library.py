@@ -33,6 +33,11 @@ class Ui_material_window(object):
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.gridLayout = QGridLayout()
         self.gridLayout.setObjectName(u"gridLayout")
+        self.material_list = QListWidget(self.scrollAreaWidgetContents)
+        self.material_list.setObjectName(u"material_list")
+
+        self.gridLayout.addWidget(self.material_list, 0, 0, 1, 1)
+
 
         self.horizontalLayout.addLayout(self.gridLayout)
 

@@ -34,7 +34,11 @@
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <layout class="QGridLayout" name="gridLayout"/>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="0">
+           <widget class="QListWidget" name="material_list"/>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>

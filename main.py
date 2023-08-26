@@ -3,7 +3,7 @@ sys.path.append('/mnt/32346261-2a77-4ea4-ad97-df46c23e0f72/Maya_Scripts/Material
 
 import importlib
 import maya.cmds as cmds
-from PySide2.QtWidgets import QMainWindow, QApplication
+from PySide2.QtWidgets import QMainWindow, QApplication, QListWidgetItem
 from UI.Ui_material_library import Ui_material_window
 
 # UI reloading - to be deleted when the UI is finished
@@ -39,7 +39,10 @@ class MaterialLibrary(QMainWindow, Ui_material_window):
             if shader_type.startswith('ai'):
                 arnold_shaders.append(shader_node)
 
-        print(arnold_shaders)
+        # Create list items and add them to the material_list in the UI
+        for material in arnold_shaders:
+            item = QListWidgetItem(material)
+            self.material_list.addItem(item)
 
 
 if __name__ == '__main__':
