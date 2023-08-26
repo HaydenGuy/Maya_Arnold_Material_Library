@@ -20,23 +20,41 @@ class MaterialLibrary(QMainWindow, Ui_material_window):
         super().__init__()
         self.setupUi(self)
 
+        # List to keep track of imported materials
+        self.imported_materials = []
+        # Folder to import materials from
         materials_folder = "/mnt/32346261-2a77-4ea4-ad97-df46c23e0f72/Maya/Material_library/Materials"
         self.import_materials_from_folder(materials_folder)
-
+        
         self.list_arnold_materials()
 
+    # Imports all .ma or .mb materials from a specified folder
     def import_materials_from_folder(self, folder_path):
         '''
-        Walk through the directory tree rooted at 'folder_path'
-    # 'root' is the current directory being visited
-    # 'dirs' is a list of subdirectories in the current directory
-    # 'files' is a list of filenames in the current directory
+            Walk through the directory tree rooted at 'folder_path'
+            'root' is the current directory being visited
+            'dirs' is a list of subdirectories in the current directory
+            'files' is a list of filenames in the current directory
         '''
         for root, dirs, files in os.walk(folder_path):
             for file in files:
-                if file.endswith(".ma") or file.endswith(".mb"):
-                    file_path = os.path.join(root, file)
-                    cmds.file(file_path, i=True)
+                # Checks the file for a maya ascii/binary extension, if not found runs the next step of the lopp
+                if not (file.endswith(".ma") or file.endswith(".mb")):
+                    continue
+                    
+                # Creates a full path to the file by joining the root with the file name
+                file_path = os.path.join(root, file)
+                
+                # Extract the material name from the file name (without extension)
+                material_name = os.path.splitext(file)[0]
+                
+                # Skip importing if the material already exists in the scene
+                if cmds.objExists(material_name):
+                    continue
+                
+                # Import the file into the scene and add to the list of imported files
+                cmds.file(file_path, i=True)
+                self.imported_materials.append(file_path)
 
     # Gets a list of all arnold materials
     def list_arnold_materials(self):
