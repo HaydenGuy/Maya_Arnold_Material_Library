@@ -4,7 +4,10 @@ sys.path.append('/mnt/32346261-2a77-4ea4-ad97-df46c23e0f72/Maya_Scripts/Material
 import os
 import importlib
 import maya.cmds as cmds
-from PySide2.QtWidgets import QMainWindow, QApplication, QListWidgetItem
+import maya.OpenMayaUI as mui
+import shiboken2
+
+from PySide2.QtWidgets import QMainWindow, QApplication, QWidget, QLabel
 from UI.Ui_material_library import Ui_material_window
 
 # UI reloading - to be deleted when the UI is finished
@@ -23,10 +26,10 @@ class MaterialLibrary(QMainWindow, Ui_material_window):
         # List to keep track of imported materials
         self.imported_materials = []
         # Folder to import materials from
-        materials_folder = "/mnt/32346261-2a77-4ea4-ad97-df46c23e0f72/Maya/Material_library/Materials"
+        materials_folder = "/mnt/32346261-2a77-4ea4-ad97-df46c23e0f72/Maya/Material_library/Materials/GOLD"
         self.import_materials_from_folder(materials_folder)
-        
-        self.list_arnold_materials()
+
+        self.display_swatches()
 
     # Imports all .ma or .mb materials from a specified folder
     def import_materials_from_folder(self, folder_path):
@@ -56,7 +59,7 @@ class MaterialLibrary(QMainWindow, Ui_material_window):
                 cmds.file(file_path, i=True)
                 self.imported_materials.append(file_path)
 
-    # Gets a list of all arnold materials
+    # Gets a list of all arnold materials in the scene
     def list_arnold_materials(self):
         # Get a list of all shading engines in the scene
         shading_engines = cmds.ls(type='shadingEngine')
@@ -73,11 +76,27 @@ class MaterialLibrary(QMainWindow, Ui_material_window):
             # If the shader type starts with ai (arnold), append it to the arnold_shaders list
             if shader_type.startswith('ai'):
                 arnold_shaders.append(shader_node)
+        
+        return arnold_shaders
 
-        # Create list items and add them to the material_list in the UI
+    # Adds swatches to the UI window
+    def display_swatches(self):
+        # Get a list of Arnold shaders
+        arnold_shaders = self.list_arnold_materials()
+        
+        # Loop through each shader
         for material in arnold_shaders:
-            item = QListWidgetItem(material)
-            self.material_list.addItem(item)
+            # Generate a unique name for the swatch control
+            swatch_name = f'{material}_swatch'
+            
+            # Create the swatch using cmds.swatchDisplayPort, specifying the swatch name and size
+            swatch_widget = cmds.swatchDisplayPort(f'{swatch_name}', wh=(100, 100), sn=material)
+            
+            # Convert the C++ swatch_widget pointer to a PySide2 QWidget instance
+            swatch_qt_widget = shiboken2.wrapInstance(int(mui.MQtUtil.findControl(swatch_widget)), QWidget)
+            
+            # Add the PySide2 QWidget to the grid layout, displaying the swatch
+            self.gridLayout.addWidget(swatch_qt_widget)
 
 
 if __name__ == '__main__':
@@ -85,5 +104,5 @@ if __name__ == '__main__':
     if not app:
         app = QApplication(sys.argv)
     
-    window = MaterialLibrary()    
+    window = MaterialLibrary()
     window.show()
