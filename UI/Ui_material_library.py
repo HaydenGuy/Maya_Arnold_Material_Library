@@ -19,6 +19,10 @@ class Ui_material_window(object):
             material_window.setObjectName(u"material_window")
         material_window.resize(549, 226)
         material_window.setMinimumSize(QSize(236, 153))
+        self.actionOpen = QAction(material_window)
+        self.actionOpen.setObjectName(u"actionOpen")
+        self.actionQuit = QAction(material_window)
+        self.actionQuit.setObjectName(u"actionQuit")
         self.centralwidget = QWidget(material_window)
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout = QVBoxLayout(self.centralwidget)
@@ -45,10 +49,16 @@ class Ui_material_window(object):
         self.menubar = QMenuBar(material_window)
         self.menubar.setObjectName(u"menubar")
         self.menubar.setGeometry(QRect(0, 0, 549, 23))
+        self.menuFile = QMenu(self.menubar)
+        self.menuFile.setObjectName(u"menuFile")
         material_window.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(material_window)
         self.statusbar.setObjectName(u"statusbar")
         material_window.setStatusBar(self.statusbar)
+
+        self.menubar.addAction(self.menuFile.menuAction())
+        self.menuFile.addAction(self.actionOpen)
+        self.menuFile.addAction(self.actionQuit)
 
         self.retranslateUi(material_window)
 
@@ -57,5 +67,8 @@ class Ui_material_window(object):
 
     def retranslateUi(self, material_window):
         material_window.setWindowTitle(QCoreApplication.translate("material_window", u"Material Library", None))
+        self.actionOpen.setText(QCoreApplication.translate("material_window", u"Open", None))
+        self.actionQuit.setText(QCoreApplication.translate("material_window", u"Quit", None))
+        self.menuFile.setTitle(QCoreApplication.translate("material_window", u"File", None))
     # retranslateUi
 
