@@ -7,7 +7,9 @@ import maya.cmds as cmds
 import maya.OpenMayaUI as mui
 import shiboken2
 
-from PySide2.QtWidgets import QMainWindow, QApplication, QWidget, QLabel
+from PySide2.QtWidgets import QMainWindow, QApplication, QWidget
+from PySide2.QtCore import Qt
+
 from UI.Ui_material_library import Ui_material_window
 
 # UI reloading - to be deleted when the UI is finished
@@ -27,6 +29,9 @@ class MaterialLibrary(QMainWindow, Ui_material_window):
         self.imported_materials = []
         # Folder to import materials from
         materials_folder = "/mnt/32346261-2a77-4ea4-ad97-df46c23e0f72/Maya/Material_library/Materials/GOLD"
+        # List to keep track of the created swatch widgets
+        self.swatch_widgets = []
+        
         self.import_materials_from_folder(materials_folder)
 
         self.display_swatches()
@@ -85,18 +90,25 @@ class MaterialLibrary(QMainWindow, Ui_material_window):
         arnold_shaders = self.list_arnold_materials()
         
         # Loop through each shader
-        for material in arnold_shaders:
+        for material in arnold_shaders:    
             # Generate a unique name for the swatch control
             swatch_name = f'{material}_swatch'
             
-            # Create the swatch using cmds.swatchDisplayPort, specifying the swatch name and size
-            swatch_widget = cmds.swatchDisplayPort(f'{swatch_name}', wh=(100, 100), sn=material)
-            
+            # Checks to see if the swatch exists in the scene
+            if swatch_name in self.swatch_widgets:
+                swatch_widget = swatch_name
+            else:
+                # Appends the swatch name to the swatch_widgets list
+                self.swatch_widgets.append(swatch_name)
+                # Create the swatch using cmds.swatchDisplayPort, specifying the swatch name and size
+                swatch_widget = cmds.swatchDisplayPort(f'{swatch_name}', wh=(50, 50), sn=material)
+
             # Convert the C++ swatch_widget pointer to a PySide2 QWidget instance
-            swatch_qt_widget = shiboken2.wrapInstance(int(mui.MQtUtil.findControl(swatch_widget)), QWidget)
-            
-            # Add the PySide2 QWidget to the grid layout, displaying the swatch
-            self.gridLayout.addWidget(swatch_qt_widget)
+            swatch_qt_widget = shiboken2.wrapInstance(int(
+                mui.MQtUtil.findControl(swatch_widget)), QWidget)
+                
+            # Add the PySide2 QWidget to the swatch layout, displaying the swatch
+            self.swatch_layout.addWidget(swatch_qt_widget)
 
 
 if __name__ == '__main__':

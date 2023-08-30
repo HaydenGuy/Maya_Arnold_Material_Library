@@ -17,7 +17,8 @@ class Ui_material_window(object):
     def setupUi(self, material_window):
         if not material_window.objectName():
             material_window.setObjectName(u"material_window")
-        material_window.resize(550, 525)
+        material_window.resize(549, 226)
+        material_window.setMinimumSize(QSize(236, 153))
         self.centralwidget = QWidget(material_window)
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout = QVBoxLayout(self.centralwidget)
@@ -28,13 +29,13 @@ class Ui_material_window(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 532, 461))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 531, 162))
         self.horizontalLayout = QHBoxLayout(self.scrollAreaWidgetContents)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.gridLayout = QGridLayout()
-        self.gridLayout.setObjectName(u"gridLayout")
+        self.swatch_layout = QHBoxLayout()
+        self.swatch_layout.setObjectName(u"swatch_layout")
 
-        self.horizontalLayout.addLayout(self.gridLayout)
+        self.horizontalLayout.addLayout(self.swatch_layout)
 
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
 
@@ -43,7 +44,7 @@ class Ui_material_window(object):
         material_window.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(material_window)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 550, 23))
+        self.menubar.setGeometry(QRect(0, 0, 549, 23))
         material_window.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(material_window)
         self.statusbar.setObjectName(u"statusbar")
