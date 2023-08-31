@@ -38,8 +38,11 @@ class MaterialLibrary(QMainWindow, Ui_material_window):
 
     # Opens an existing .ma or .mb file
     def open_file(self):
+        # Gets the root directory of the currently open workspace
+        current_directory = cmds.workspace(q=True, rootDirectory=True)
+        
         # Uses QFileDialog to open a save dialog box
-        file_path, _ = QFileDialog.getOpenFileName(self, 'Open file', '', 'Maya Files (*.ma *.mb)')
+        file_path, _ = QFileDialog.getOpenFileName(self, 'Open file', current_directory, 'Maya Files (*.ma *.mb)')
 
         if file_path:
             # Extract the directory path from the selected file path
