@@ -7,8 +7,8 @@ import maya.cmds as cmds
 import maya.OpenMayaUI as mui
 import shiboken2
 
-from PySide2.QtCore import Qt, QMargins, QPoint, QRect, QSize
 from PySide2.QtWidgets import QApplication, QLayout, QPushButton, QSizePolicy, QWidget, QMainWindow, QFileDialog
+from PySide2.QtCore import Qt, QMargins, QPoint, QRect, QSize
 
 from UI.Ui_material_library import Ui_material_window
 
@@ -92,7 +92,6 @@ class MaterialLibrary(QMainWindow, Ui_material_window):
         # Loop through each shader
         for material in self.arnold_shaders:
             swatch_name = f'{material}_swatch'
-            swatch_qt_widget = None
 
             if swatch_name not in self.swatch_widgets:
                 # Create the swatch specifying the swatch name and size
