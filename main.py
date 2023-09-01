@@ -7,8 +7,8 @@ import maya.cmds as cmds
 import maya.OpenMayaUI as mui
 import shiboken2
 
-from PySide2.QtWidgets import QMainWindow, QApplication, QWidget, QFileDialog
-from PySide2.QtCore import Qt
+from PySide2.QtCore import Qt, QMargins, QPoint, QRect, QSize
+from PySide2.QtWidgets import QApplication, QLayout, QPushButton, QSizePolicy, QWidget, QMainWindow, QFileDialog
 
 from UI.Ui_material_library import Ui_material_window
 
@@ -17,7 +17,9 @@ def reload_module(module_name):
     if module_name in sys.modules:
         importlib.reload(sys.modules[module_name])
 
+
 reload_module('UI.Ui_material_library')
+
 
 class MaterialLibrary(QMainWindow, Ui_material_window):
     def __init__(self):
@@ -28,7 +30,7 @@ class MaterialLibrary(QMainWindow, Ui_material_window):
         self.arnold_shaders = []
         # List to keep track of swatch widgets
         self.swatch_widgets = []
-        
+
         # Triggers for the open and quit file menu options
         self.actionOpen.triggered.connect(self.open_file)
         self.actionQuit.triggered.connect(self.quit_file)
@@ -40,9 +42,10 @@ class MaterialLibrary(QMainWindow, Ui_material_window):
     def open_file(self):
         # Gets the root directory of the currently open workspace
         current_directory = cmds.workspace(q=True, rootDirectory=True)
-        
+
         # Uses QFileDialog to open a save dialog box
-        file_path, _ = QFileDialog.getOpenFileName(self, 'Open file', current_directory, 'Maya Files (*.ma *.mb)')
+        file_path, _ = QFileDialog.getOpenFileName(
+            self, 'Open file', current_directory, 'Maya Files (*.ma *.mb)')
 
         if file_path:
             # Extract the directory path from the selected file path
@@ -73,7 +76,8 @@ class MaterialLibrary(QMainWindow, Ui_material_window):
 
         for sg in shading_engines:
             # Find the shader connected to the shading engine's surfaceShader attribute
-            shader_connections = cmds.listConnections(sg + '.surfaceShader', source=True, destination=False)
+            shader_connections = cmds.listConnections(
+                sg + '.surfaceShader', source=True, destination=False)
             # Get the first connected shader - Shading engines can only have one connected shader node
             shader_node = shader_connections[0]
             # Get the type of shader node
@@ -82,21 +86,23 @@ class MaterialLibrary(QMainWindow, Ui_material_window):
             # If the shader type starts with ai (arnold), append it to the arnold_shaders list
             if shader_type.startswith('ai'):
                 self.arnold_shaders.append(shader_node)
-        
+
     # Adds swatches to the UI window
     def display_swatches(self):
         # Loop through each shader
         for material in self.arnold_shaders:
             swatch_name = f'{material}_swatch'
+            swatch_qt_widget = None
 
             if swatch_name not in self.swatch_widgets:
                 # Create the swatch specifying the swatch name and size
-                swatch_widget = cmds.swatchDisplayPort(f'{swatch_name}', wh=(50, 50), sn=material)
+                swatch_widget = cmds.swatchDisplayPort(
+                    f'{swatch_name}', w=(70), renderSize=(70), shadingNode=material)
 
                 # Convert the C++ swatch_widget pointer to a PySide2 QWidget instance
                 swatch_qt_widget = shiboken2.wrapInstance(int(
                     mui.MQtUtil.findControl(swatch_widget)), QWidget)
-                
+
                 self.swatch_widgets.append(swatch_name)
 
             # Add the PySide2 QWidget to the swatch layout, displaying the swatch
@@ -111,6 +117,6 @@ if __name__ == '__main__':
     app = QApplication.instance()
     if not app:
         app = QApplication(sys.argv)
-    
+
     window = MaterialLibrary()
     window.show()
